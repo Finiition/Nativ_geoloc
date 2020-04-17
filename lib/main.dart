@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
@@ -27,6 +27,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _selectedPrecision = "High";
+
+  bool _backgroundTask;
+  bool _reverseGeocoding;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,13 +46,19 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 children: <Widget>[
                   Text('Precision'),
+                  Spacer(),
                   DropdownButton<String>(
+                    value: _selectedPrecision,
                     items:
                         <String>['High', 'Medium', 'Low'].map((String value) {
                       return new DropdownMenuItem<String>(
                           value: value, child: Text(value));
                     }).toList(),
-                    onChanged: (_) {},
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPrecision = value;
+                      });
+                    },
                   ),
                 ],
               ),
@@ -57,14 +67,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Row(
                 children: <Widget>[
-                  Text('Fréquence'),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TextField(
-                        keyboardType: TextInputType.numberWithOptions(
-                            signed: false, decimal: false),
-                      ),
+                  Text('Fréquence (s)'),
+                  Spacer(),
+                  SizedBox(
+                    width: 100,
+                    child: TextField(
+                      keyboardType: TextInputType.numberWithOptions(
+                          signed: false, decimal: false),
                     ),
                   )
                 ],
@@ -75,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 children: <Widget>[
                   Text('Background task'),
+                  Spacer(),
                   Switch(
                     value: true,
                     onChanged: (value) {},
@@ -87,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 children: <Widget>[
                   Text('Reverse géocoding'),
+                  Spacer(),
                   Switch(
                     value: true,
                     onChanged: (value) {},

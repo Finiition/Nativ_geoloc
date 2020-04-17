@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:nativegeoloc/platform/platform_channel_helper.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,6 +34,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _backgroundTask = false;
   bool _reverseGeocoding = false;
+
+  Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+//    _initTimer();
+  }
+
+  @override
+  void dispose() {
+    _disposeTimer();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,12 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Switch(
                     value: _backgroundTask,
                     onChanged: (value) {
-                      print(value);
                       setState(() {
                         _backgroundTask = value;
                       });
-                      print('Change background Task : ' +
-                          _backgroundTask.toString());
                     },
                   )
                 ],
@@ -108,12 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Switch(
                     value: _reverseGeocoding,
                     onChanged: (value) {
-                      print(value);
                       setState(() {
                         _reverseGeocoding = value;
                       });
-                      print('Change reversecoding : ' +
-                          _reverseGeocoding.toString());
                     },
                   )
                 ],
@@ -127,10 +139,42 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(color: Colors.white),
                 ),
                 color: Colors.blue,
-                onPressed: () {},
+                onPressed: () {
+                  _requestPosition();
+                  print('OK');
+                },
               )
             ],
           ),
         ));
   }
+
+  _requestPosition() {
+    print('Request position');
+    PlateformChannelHelper.getNativeUserPosition().then((messageNative) {
+      String messageNatif = messageNative;
+      print(messageNatif);
+    });
+  }
+
+  _initTimer() {
+//    timer = Timer.periodic(Duration(seconds: 15), (timer) {
+//      print('Timer ' + DateTime.now().millisecondsSinceEpoch.toString());
+
+    // BROADCAST DATA TO STREAM
+//      TimerStreamHelper.getSingelton().streamController.add("I got a new Time");
+    PlateformChannelHelper.getNativeUserPosition().then((messageNative) {
+      print(messageNative);
+    });
+//      TimerStreamHelper.getSingelton()
+//          .streamController
+//          .add(DateTime.now().millisecondsSinceEpoch);
+    //});
+  }
+
+  _disposeTimer() {
+    timer?.cancel();
+  }
 }
+
+//fr.mds.nativgeoloc/user_position

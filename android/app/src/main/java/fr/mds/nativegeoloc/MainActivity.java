@@ -26,17 +26,19 @@ public class MainActivity extends FlutterActivity implements LocationListener {
     private static final String CHANNEL = "fr.mds.nativegeoloc/user_position";
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
+    LocationManager locationManager;
+
     String position = "0 , 0";
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
 
-
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler(
                         (call, result) -> {
                             if (call.method.toString().equals("userPosition")) {
+                                //Location location = getLastBestLocation();
                                 result.success("User position : " + position);
                             } else {
                                 result.success("Bad position user : " + call.method.toString());
@@ -45,12 +47,38 @@ public class MainActivity extends FlutterActivity implements LocationListener {
                 );
     }
 
+    private Location getLastBestLocation() {
+        Location locationNet = null;
+        Location locationGPS = null;
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            locationNet = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        long GPSLocationTime = 0;
+        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
+
+        long NetLocationTime = 0;
+
+        if (null != locationNet) {
+            NetLocationTime = locationNet.getTime();
+        }
+
+        if ( 0 < GPSLocationTime - NetLocationTime ) {
+            return locationGPS;
+        }
+        else {
+            return locationNet;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if(checkAndRequestPermissions()) {
-
         }
     }
 
@@ -77,6 +105,7 @@ public class MainActivity extends FlutterActivity implements LocationListener {
         String longitude = "Longitude: " + location.getLongitude();
         String latitude = "Latitude: " + location.getLatitude();
         position = longitude + " " + latitude;
+        Log.d("Longitude", longitude);
     }
 
     @Override

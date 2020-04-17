@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nativegeoloc/platform/platform_channel_helper.dart';
+import 'package:nativegeoloc/stream/timer_stream_helper.dart';
 
 void main() => runApp(MyApp());
 
@@ -40,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-//    _initTimer();
+    _initTimer();
   }
 
   @override
@@ -150,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _requestPosition() {
-    print('Request position');
     PlateformChannelHelper.getNativeUserPosition().then((messageNative) {
       String messageNatif = messageNative;
       print(messageNatif);
@@ -158,18 +158,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _initTimer() {
-//    timer = Timer.periodic(Duration(seconds: 15), (timer) {
-//      print('Timer ' + DateTime.now().millisecondsSinceEpoch.toString());
+    timer = Timer.periodic(Duration(seconds: 15), (timer) {
+      print('Timer ' + DateTime.now().millisecondsSinceEpoch.toString());
 
-    // BROADCAST DATA TO STREAM
-//      TimerStreamHelper.getSingelton().streamController.add("I got a new Time");
-    PlateformChannelHelper.getNativeUserPosition().then((messageNative) {
-      print(messageNative);
+      //BROADCAST DATA TO STREAM
+      TimerStreamHelper.getSingelton().streamController.add("I got a new Time");
+
+      TimerStreamHelper.getSingelton()
+          .streamController
+          .add(DateTime.now().millisecondsSinceEpoch);
+      _requestPosition();
     });
-//      TimerStreamHelper.getSingelton()
-//          .streamController
-//          .add(DateTime.now().millisecondsSinceEpoch);
-    //});
   }
 
   _disposeTimer() {

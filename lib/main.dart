@@ -29,8 +29,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _selectedPrecision = "High";
 
-  bool _backgroundTask;
-  bool _reverseGeocoding;
+  bool _backgroundTask = false;
+  bool _reverseGeocoding = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +86,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text('Background task'),
                   Spacer(),
                   Switch(
-                    value: true,
-                    onChanged: (value) {},
+                    value: _backgroundTask,
+                    onChanged: (value) {
+                      print(value);
+                      setState(() {
+                        _backgroundTask = value;
+                      });
+                      print('Change background Task : ' +
+                          _backgroundTask.toString());
+                    },
                   )
                 ],
               ),
@@ -99,8 +106,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text('Reverse géocoding'),
                   Spacer(),
                   Switch(
-                    value: true,
-                    onChanged: (value) {},
+                    value: _reverseGeocoding,
+                    onChanged: (value) {
+                      print(value);
+                      setState(() {
+                        _reverseGeocoding = value;
+                      });
+                      print('Change reversecoding : ' +
+                          _reverseGeocoding.toString());
+                    },
                   )
                 ],
               ),
